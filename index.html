@@ -1,63 +1,151 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
+  <meta charset="utf-8">
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  >
 
-<title>ToolBelt AR</title>
+  <title>ToolBelt AR</title>
 
-<script type="module"
-src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js">
-</script>
+  <script
+    type="module"
+    src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js">
+  </script>
 
-<style>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-body{
-margin:0;
-font-family:-apple-system,BlinkMacSystemFont,sans-serif;
-background:#f3f3f3;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-}
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: #f4f4f4;
+      font-family: Arial, Helvetica, sans-serif;
+    }
 
-model-viewer{
-width:100%;
-height:100vh;
-}
+    model-viewer {
+      width: 100%;
+      height: 100%;
+      background: #f4f4f4;
+    }
 
-</style>
+    .ar-button {
+      position: absolute;
+      left: 50%;
+      bottom: calc(28px + env(safe-area-inset-bottom));
+      transform: translateX(-50%);
+      z-index: 100;
 
+      min-width: 260px;
+      padding: 17px 24px;
+
+      border: 0;
+      border-radius: 999px;
+
+      background: #FCCD0A;
+      color: #000;
+
+      font-size: 17px;
+      font-weight: 800;
+      text-align: center;
+
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+      cursor: pointer;
+    }
+
+    .instructions {
+      position: absolute;
+      top: calc(20px + env(safe-area-inset-top));
+      left: 20px;
+      right: 20px;
+      z-index: 10;
+      text-align: center;
+      pointer-events: none;
+    }
+
+    .instructions h1 {
+      margin: 0 0 6px;
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    .instructions p {
+      margin: 0;
+      color: #555;
+      font-size: 15px;
+    }
+
+    .unsupported {
+      display: none;
+      position: absolute;
+      left: 20px;
+      right: 20px;
+      bottom: 100px;
+      z-index: 20;
+
+      padding: 14px;
+      border-radius: 12px;
+      background: white;
+      color: #111;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+    }
+  </style>
 </head>
 
 <body>
 
-<model-viewer
+  <div class="instructions">
+    <h1>Place ToolBelt</h1>
+    <p>Tap below, scan the floor and place the icon.</p>
+  </div>
 
-src="toolbelt_icon_v3.glb"
+  <model-viewer
+    id="toolbelt-model"
+    src="./toolbelt_icon_v3.glb"
+    alt="Six-foot ToolBelt icon"
+    camera-controls
+    auto-rotate
+    shadow-intensity="1.2"
+    shadow-softness="0.8"
+    exposure="1"
+    ar
+    ar-modes="quick-look scene-viewer webxr"
+    ar-placement="floor"
+    ar-scale="auto"
+    touch-action="pan-y">
 
-camera-controls
+    <button
+      class="ar-button"
+      slot="ar-button">
+      Place ToolBelt in your space
+    </button>
 
-auto-rotate
+  </model-viewer>
 
-shadow-intensity="1"
+  <div class="unsupported" id="unsupported">
+    AR is unavailable in this browser. Open this page directly in Safari.
+  </div>
 
-ar
+  <script>
+    const model = document.querySelector("#toolbelt-model");
+    const unsupported = document.querySelector("#unsupported");
 
-ar-modes="webxr scene-viewer quick-look"
+    model.addEventListener("ar-status", (event) => {
+      console.log("AR status:", event.detail.status);
 
->
-
-<button slot="ar-button">
-
-🚀 Place ToolBelt in your space
-
-</button>
-
-</model-viewer>
+      if (event.detail.status === "failed") {
+        unsupported.style.display = "block";
+      }
+    });
+  </script>
 
 </body>
-
 </html>
